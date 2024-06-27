@@ -1,12 +1,10 @@
 import React from 'react'
 import { View, Text, Button, StyleSheet } from 'react-native'
+import { API_URL, API_ACCESS_TOKEN } from '@env'
 
 export default function MovieDetail({ navigation }: any): JSX.Element {
   const fetchData = (): void => {
-    const ACCESS_TOKEN = process.env.EXPO_PUBLIC_API_ACCESS_TOKEN
-    const URL = process.env.EXPO_PUBLIC_API_URL
-
-    if (ACCESS_TOKEN == null || URL == null) {
+    if (API_ACCESS_TOKEN == null || API_URL == null) {
       throw new Error('ENV not found')
     }
 
@@ -14,11 +12,11 @@ export default function MovieDetail({ navigation }: any): JSX.Element {
       method: 'GET',
       headers: {
         accept: 'application/json',
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
+        Authorization: `Bearer ${API_ACCESS_TOKEN}`,
       },
     }
 
-    fetch(URL, options)
+    fetch(API_URL, options)
       .then(async (response) => await response.json())
       .then((response) => {
         console.log(response)
