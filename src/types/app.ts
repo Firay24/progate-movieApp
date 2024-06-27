@@ -2,6 +2,7 @@ export interface MovieListProps {
   title: string
   path: string
   coverType: 'poster' | 'backdrop'
+  moviesProps?: Movie[]
 }
 
 export interface Movie {
