@@ -3,10 +3,12 @@ import { View, Text, Button, StyleSheet } from 'react-native'
 
 export default function MovieDetail({ navigation }: any): JSX.Element {
   const fetchData = (): void => {
-    const ACCESS_TOKEN =
-      'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4YTIwNTMwODYyMzQ0OGQyNDMyYzk5NmZkM2Y3M2Y3ZSIsIm5iZiI6MTcxOTUwNjM5MS4yNDM1NzQsInN1YiI6IjY2N2Q5MTM4ZGY5MzE4ZGEzMmFmOWEwNiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.mx96l9oqlTPXIS57gSMT6VhiCj1KPprTbCcPq6hofnc'
-    const url =
-      'https://api.themoviedb.org/3/movie/popular?language=en-US&page=1'
+    const ACCESS_TOKEN = process.env.EXPO_PUBLIC_API_ACCESS_TOKEN
+    const URL = process.env.EXPO_PUBLIC_API_URL
+
+    if (ACCESS_TOKEN == null || URL == null) {
+      throw new Error('ENV not found')
+    }
 
     const options = {
       method: 'GET',
@@ -16,7 +18,7 @@ export default function MovieDetail({ navigation }: any): JSX.Element {
       },
     }
 
-    fetch(url, options)
+    fetch(URL, options)
       .then(async (response) => await response.json())
       .then((response) => {
         console.log(response)
