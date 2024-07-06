@@ -5,6 +5,12 @@ export interface MovieListProps {
   moviesProps?: Movie[]
 }
 
+export interface FavoriteContextProps {
+  favorites: Movie[]
+  addFavorite: (movie: Movie) => void
+  removeFavorite: (movieId: number) => void
+}
+
 export interface Movie {
   backdrop_path: string
   genres: { id: number; name: string }

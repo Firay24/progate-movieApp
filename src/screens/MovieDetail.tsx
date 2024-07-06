@@ -5,17 +5,21 @@ import {
   StyleSheet,
   ImageBackground,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Movie } from '../types/app'
 import { API_ACCESS_TOKEN } from '@env'
 import { FontAwesome } from '@expo/vector-icons'
 import MovieList from '../components/movies/MovieList'
+import { useFavorites } from '../store/favoriteProvider'
 
 export default function MovieDetail({ route }: any): JSX.Element {
+  const { addFavorite, favorites, removeFavorite } = useFavorites()
   const { id } = route.params
   const [movie, setMovie] = useState<Movie | null>(null)
   const [movieLists, setmovieLists] = useState<Movie[] | null>([])
+  const [isFavorite, setIsFavorite] = useState(false)
 
   useEffect(() => {
     getMovieById(id)
@@ -73,6 +77,17 @@ export default function MovieDetail({ route }: any): JSX.Element {
     return date.toLocaleDateString('en-US', options)
   }
 
+  useEffect(() => {
+    if (movie) {
+      const isFavorite = favorites.find((item) => item.id === movie.id)
+      if (isFavorite) {
+        setIsFavorite(true)
+      } else {
+        setIsFavorite(false)
+      }
+    }
+  })
+
   return (
     <ScrollView>
       <View>
@@ -89,12 +104,37 @@ export default function MovieDetail({ route }: any): JSX.Element {
                 colors={['transparent', 'rgba(0,0,0,0.8)']}
                 style={styles.gradient}
               />
-              <View style={styles.textContainer}>
-                <Text style={styles.title}>{movie.original_title}</Text>
-                <Text style={styles.rating}>
-                  <FontAwesome name="star" size={20} color="gold" />{' '}
-                  {movie.vote_average}
-                </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <View style={styles.textContainer}>
+                  <Text style={styles.title}>{movie.original_title}</Text>
+                  <Text style={styles.rating}>
+                    <FontAwesome name="star" size={20} color="gold" />{' '}
+                    {movie.vote_average}
+                  </Text>
+                </View>
+                <View style={{ paddingRight: 20 }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      if (isFavorite) {
+                        removeFavorite(movie.id)
+                      } else {
+                        addFavorite(movie)
+                      }
+                    }}
+                  >
+                    <FontAwesome
+                      name={isFavorite ? 'heart' : 'heart-o'}
+                      size={30}
+                      color={isFavorite ? 'red' : 'white'}
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
             </ImageBackground>
             <View style={{ padding: 15 }}>
@@ -144,6 +184,12 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     marginTop: 32,
+  },
+  infoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 5,
   },
   image: {
     width: '100%',
